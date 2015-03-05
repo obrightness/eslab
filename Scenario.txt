@@ -1,0 +1,31 @@
+Quick Notes 2015/03/05 Thu 18:00
+
+「 HTTP 」是個非常被廣泛使用的 Application Layer 通訊協定
+
+    .---------------.    HTTP Request   .---------------.
+    |               |   ------------->  |               |
+    |  Web Browser  |       TCP/IP      |   Web Server  |
+    |               |   <-------------  |               |
+    '---------------'    HTTP Response  '---------------'
+
+有些事件會讓瀏覽器發送 HTTP requests 例如：
+
+    * 在瀏覽器打開新的 URL
+    * 使用者提交一個表單
+    * 某個 JavaScript 程式碼決定要和遠端服務器交換資料
+--
+
+
+
+
+HTTP Response 可能是個 HTML 文件、也可能是圖片、
+樣式表（ CSS ）、或者 JavaScript 腳本。
+
+
+撰寫 JavaScript 腳本，可以動態地決定瀏覽器與伺服器之間的互動。
+
+
+
+
+
+--
