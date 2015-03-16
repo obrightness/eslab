@@ -6,6 +6,7 @@
 <input id="user-input" autofocus>
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
+<button id="cookies-btn">Cookies</button>
 <ul id="list-of-data"></ul>
 
 <script>
@@ -14,6 +15,7 @@ var inputElm = document.getElementById('user-input');
 var submitBtn = document.getElementById('submit-btn');
 var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
+var cookieBtn = document.getElementById('cookies-btn');
 
 var retrieveAllDataFromServer = function () {
   var xhr = new XMLHttpRequest();
@@ -32,6 +34,16 @@ var retrieveAllDataFromServer = function () {
   };
   xhr.send();
 };
+
+cookieBtn.addEventListener('click', function() {
+    if(document.cookie.indexOf('username') == -1){
+        alert('no cookies');
+    }else{
+        alert("cookies!!");    
+    
+    }
+
+});
 
 refreshBtn.addEventListener('click', function () {
   while (listElm.firstChild) {

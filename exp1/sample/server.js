@@ -37,7 +37,8 @@ var postRequestHandler = function (req, res) {
           res.write('Internal Server Error');
           res.end();
         } else {
-          res.writeHeader(200, { 'Content-Type': 'text/html' });
+          res.writeHeader(200, {  'Set-Cookie': 'username=1', 'Content-Type': 'text/html'});
+          console.log('Cookie Set');
           res.write('OK');
           res.end();
         }
