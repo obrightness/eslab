@@ -2,11 +2,13 @@
 <title>Test Client Web Page</title>
 <meta charset="utf-8">
 
+
 <h3>留言板</h3>
 <input id="user-input" autofocus>
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
 <button id="cookies-btn">Cookies</button>
+<button id="login-btn">Login</button>
 <ul id="list-of-data"></ul>
 
 <script>
@@ -16,6 +18,7 @@ var submitBtn = document.getElementById('submit-btn');
 var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
 var cookieBtn = document.getElementById('cookies-btn');
+var loginBtn = document.getElementById('login-btn');
 
 var retrieveAllDataFromServer = function () {
   var xhr = new XMLHttpRequest();
@@ -35,11 +38,23 @@ var retrieveAllDataFromServer = function () {
   xhr.send();
 };
 
+loginBtn.addEventListener('click', function(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:1234/login');
+    xhr.onload = function () {
+    console.log('Got response of POST /login:' +
+        this.responseText);
+    };
+    data = 'username=admin;pass=pwd';
+    xhr.send(data);    
+});
+
 cookieBtn.addEventListener('click', function() {
     if(document.cookie.indexOf('username') == -1){
         alert('no cookies');
     }else{
-        alert("cookies!!");    
+        document.cookie = "expires=" + (now-1).toString();
+        alert("cookies!! deleted");    
     
     }
 

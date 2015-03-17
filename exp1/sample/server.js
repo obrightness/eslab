@@ -10,6 +10,8 @@ var fs = require('fs');
 // http://redis.io/topics/data-types-intro
 var redis = require('redis');
 var redis_client = redis.createClient();
+var redis_user = redis.createClient();
+redis_user.set('admin', 'pwd');
 
 
 var getRequestHandler = function (req, res) {
@@ -60,7 +62,38 @@ var postRequestHandler = function (req, res) {
       }
     });
 
+  }else if(req.url === '/login' ){
+      res.on('data', function(data){
+        var info = data.split(';');
+        var username = data[0].substring(9);
+        var pwd = data[1].substirng(9);
+        if( redis_user.exist(username) ){
+            console.log(username + ' try to login');
+            if( redis_user.get(username) == pwd ){
+                console.log( username + ' login successful with pwd: ' + pwd);
+                res.writeHeader(200, {  'Set-Cookie': 'username=' + username, 'Content-Type': 'text/html'});
+                console.log('Cookie Set');
+                res.write('OK');
+            }else{
+                console.log( 'password: ' + pwd + ' incorrect!');
+                res.writeHeader(500, { 'Content-Type': 'text/plain' });
+                res.write('Internal Server Error');
+                res.end();
+            }
+            
+        }else{
+            console.log( username + ' not exist!!');
+            res.writeHeader(500, { 'Content-Type': 'text/plain' });
+            res.write('Internal Server Error');
+            res.end();
+        }
+
+
+      });
+
   }
+    
+  
 };
 
 var server = http.createServer(function (req, res) {
@@ -73,3 +106,5 @@ var server = http.createServer(function (req, res) {
 
 server.listen(1234, '127.0.0.1');
 console.log('Server waiting for connection at http://127.0.0.1:1234/');
+
+
