@@ -11,7 +11,11 @@ var fs = require('fs');
 var redis = require('redis');
 var redis_client = redis.createClient();
 var redis_user = redis.createClient();
-redis_user.set('admin', 'pwd');
+//redis.debug_mode = true;
+redis_user.on('connect', function(){
+    redis_user.set('admin', 'pwd');
+});
+
 
 
 var getRequestHandler = function (req, res) {
@@ -25,7 +29,8 @@ var postRequestHandler = function (req, res) {
   console.log('Got HTTP POST Request to ' + req.url);
 
   if (req.url === '/push') {
-
+     
+    console.log('push!');
     var post_request_body = '';
 
     req.on('data', function (data) {
@@ -49,7 +54,8 @@ var postRequestHandler = function (req, res) {
 
   } else if (req.url === '/retrieve') {
 
-    redis_client.lrange('all:comments', 0, -1, function(err, repl){
+      console.log('retrieve!');
+      redis_client.lrange('all:comments', 0, -1, function(err, repl){
       if (err) {
         console.log('Error when reading from Redis', err);
         res.writeHeader(500, { 'Content-Type': 'text/plain' });
@@ -63,34 +69,45 @@ var postRequestHandler = function (req, res) {
     });
 
   }else if(req.url === '/login' ){
-      res.on('data', function(data){
-        var info = data.split(';');
-        var username = data[0].substring(9);
-        var pwd = data[1].substirng(9);
-        if( redis_user.exist(username) ){
-            console.log(username + ' try to login');
-            if( redis_user.get(username) == pwd ){
-                console.log( username + ' login successful with pwd: ' + pwd);
-                res.writeHeader(200, {  'Set-Cookie': 'username=' + username, 'Content-Type': 'text/html'});
-                console.log('Cookie Set');
-                res.write('OK');
-            }else{
-                console.log( 'password: ' + pwd + ' incorrect!');
-                res.writeHeader(500, { 'Content-Type': 'text/plain' });
-                res.write('Internal Server Error');
-                res.end();
-            }
-            
-        }else{
-            console.log( username + ' not exist!!');
-            res.writeHeader(500, { 'Content-Type': 'text/plain' });
-            res.write('Internal Server Error');
-            res.end();
-        }
+      console.log('login!');
 
-
+      var info, username, pwd;
+      req.on('data', function(data){
+        console.log(data);
+        info = data.toString().split(';');
+        console.log(info);
+        username = info[0].toString().substring(9);
+        pwd = info[1].toString().substring(5);
+        console.log(info);
       });
+      req.on('end', function(data){
+          console.log(username + ' try to login');
+          redis_user.get(username, function(err, reply){
+              if( reply == null ){
 
+                  console.log( username + ' not exist!!');
+                  res.writeHeader(500, { 'Content-Type': 'text/plain' });
+                  res.write('Internal Server Error');
+                  res.end();
+              }else{
+                  if( reply == pwd ){
+                      console.log( username + ' login successful with pwd: ' + pwd);
+                      res.writeHeader(200, {  'Set-Cookie': 'username=' + username, 'Content-Type': 'text/html'});
+                      console.log('Cookie Set');
+                      res.write('OK');
+                  }else{
+
+                      console.log( 'password: ' + pwd + ' incorrect!');
+                      res.writeHeader(500, { 'Content-Type': 'text/plain' });
+                      res.write('Internal Server Error');
+                      res.end();
+
+                  }
+              }
+          });
+      });
+  }else{
+    console.log('undefined ' + req.url);
   }
     
   
