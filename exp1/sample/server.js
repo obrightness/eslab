@@ -20,19 +20,12 @@ redis_user.on('connect', function(){
 
 
 var getRequestHandler = function (req, res) {
-  console.log('Got HTTP GET Request');
-  var my_cookies = cookie(req, res, null);
-  if( my_cookies.get('login') == 'yes' ){
-    console.log('User!');
-    res.writeHeader(200, { 'Content-Type': 'text/html' });
-    res.write(fs.readFileSync('client2.html'));
-    res.end();
-  }else{
-    console.log('Guest!');
+    console.log('Got HTTP GET Request');
     res.writeHeader(200, { 'Content-Type': 'text/html' });
     res.write(fs.readFileSync('client.html'));
-    res.writeHeader(200, {})
-  }
+    res.end();
+    
+  
 };
 
 var postRequestHandler = function (req, res) {

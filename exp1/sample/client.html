@@ -4,15 +4,14 @@
 
 
 <h3>留言板</h3>
-username<input id="username" text="username">
+<div id='login-input' >username<input id="username" text="username">
 </br>
 password<input id="password" text="password">
-</br>
+</br></div>
 <input id="user-input" autofocus>
 
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
-<button id="cookies-btn">Cookies</button>
 <button id="login-btn">Login</button>
 <ul id="list-of-data"></ul>
 
@@ -24,9 +23,28 @@ var pwdElm = document.getElementById('password');
 var submitBtn = document.getElementById('submit-btn');
 var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
-var cookieBtn = document.getElementById('cookies-btn');
 var loginBtn = document.getElementById('login-btn');
 
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+    return null;
+}
+var loginAppearance = function(){
+    if(readCookie('login') == 'yes'){
+        document.getElementById("login-btn").childNodes[0].nodeValue="Logout";
+        document.getElementById("login-input").style.display = 'none';
+    }else{
+        document.getElementById("login-btn").childNodes[0].nodeValue="Login";
+        document.getElementById("login-input").style.display = 'block';
+    }
+
+};
 var retrieveAllDataFromServer = function () {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', 'http://127.0.0.1:1234/retrieve');
@@ -46,27 +64,26 @@ var retrieveAllDataFromServer = function () {
 };
 
 loginBtn.addEventListener('click', function(){
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://127.0.0.1:1234/login');
-    xhr.onreadystatechange = function () {
-        console.log('ready state:' + this.readyState);
-        if(this.readyState == 4){
-            location.reload();
-        }
-    };
-    data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
-    xhr.send(data);    
-});
-
-cookieBtn.addEventListener('click', function() {
-    if(document.cookie.indexOf('username') == -1){
-        alert('no cookies');
+    if( readCookie('login') == 'yes' ){
+        document.cookie = 'login=no;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        userElm.value='';
+        pwdElm.value='';
+        loginAppearance();
     }else{
-        document.cookie = "expires=" + (now-1).toString();
-        alert("cookies!! deleted");    
-    
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:1234/login');
+        xhr.onreadystatechange = function () {
+            console.log('ready state:' + this.readyState);
+            if(this.readyState == 4){
+                if(this.status == 200){
+                console.log('login successful');
+                loginAppearance();
+                }
+            }
+        };
+        data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
+        xhr.send(data);    
     }
-
 });
 
 refreshBtn.addEventListener('click', function () {
@@ -89,7 +106,15 @@ var postDataToServer = function (data) {
 };
 
 submitBtn.addEventListener('click', function(){
-    alert('You need to login to leave message!');
+    if( readCookie('login') == 'yes' ){
+        inputElm.value = inputElm.value.trim();
+        if (inputElm.value !== '') {
+        postDataToServer(inputElm.value);
+        inputElm.value = '';
+        }   
+    }else{
+        alert('You need to login to leave message!');
+    }
 });
 
 </script>
