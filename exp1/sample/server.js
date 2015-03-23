@@ -27,6 +27,7 @@ var postRequestHandler = function (req, res) {
     var post_request_body = '';
 
     req.on('data', function (data) {
+	console.log(data);
       post_request_body += data;
     });
 

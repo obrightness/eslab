@@ -1,19 +1,41 @@
-<!doctype html>
+<!DOCTYPE html>
 <title>Test Client Web Page</title>
 <meta charset="utf-8">
 
 <h3>留言板</h3>
+<font size="2" color="#000000">留言者暱稱</font>
+<input id="user-name" autofocus>
+</br> </br>
+<font size="2" color="#000000">留言內容 </font>
 <input id="user-input" autofocus>
+</br> </br>
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
-<ul id="list-of-data"></ul>
+</br> </br>
+
+<table id="Table" style="boder-bottom-style:none;border-width:3px;border-style:dashed;border-color:#FFAC55">
+
+<tr>
+   <td bgcolor="#ffebcd" align="center" width="50%">
+   <font size="2" color="#FFFFFF">時間</font>
+   </td>
+
+   <td bgcolor="#ffebcd" width="30%" align="center">
+   <font size="2" color="#FFFFFF">留言人</font>
+   </td>
+
+   <td bgcolor="#ffebcd" align="center">
+   <font size="2" color="#FFFFFF">留言</font>
+   </td>
+</tr>
+</table>
+
 
 <script>
 
-var inputElm = document.getElementById('user-input');
-var submitBtn = document.getElementById('submit-btn');
-var refreshBtn = document.getElementById('refresh-btn');
-var listElm = document.getElementById('list-of-data');
+var submitBtn = document.getElementById("submit-btn");
+var refreshBtn = document.getElementById("refresh-btn");
+
 
 var retrieveAllDataFromServer = function () {
   var xhr = new XMLHttpRequest();
@@ -25,18 +47,28 @@ var retrieveAllDataFromServer = function () {
     var JSON_string = this.responseText;
     var arr = JSON.parse(JSON_string);
     for (var i = 0, len = arr.length; i < len; i += 1) {
-      var liElm = document.createElement('li');
-      liElm.textContent = arr[i];
-      listElm.appendChild(liElm);
+	var test = JSON.parse(arr[i]);
+        
+	   var table = document.getElementById("Table");
+           var row = table.insertRow(i+1);
+           var liTime = row.insertCell(0);
+  	   var slitime = test.time.slice(0,24);
+           liTime.innerHTML = slitime;
+	   var liName = row.insertCell(1);
+           liName.innerHTML = test.name;
+           var liElm = row.insertCell(2);
+           liElm.innerHTML = test.message;   
     }
   };
   xhr.send();
 };
 
 refreshBtn.addEventListener('click', function () {
-  while (listElm.firstChild) {
-    listElm.removeChild(listElm.firstChild);
-  }
+  var num = document.getElementById("Table").rows.length;
+  while(document.getElementById("Table").rows.length > 2){
+    for(i = 1; i < num; i++){
+      document.getElementById("Table").deleteRow(-1);
+  }}
   retrieveAllDataFromServer();
 });
 
@@ -52,12 +84,25 @@ var postDataToServer = function (data) {
   xhr.send(data);
 };
 
+
 submitBtn.addEventListener('click', function () {
-  inputElm.value = inputElm.value.trim();
-  if (inputElm.value !== '') {
-    postDataToServer(inputElm.value);
-    inputElm.value = '';
-  }
+  
+  var msg = { 
+	time: Date(),
+	name: document.getElementById("user-name").value, 
+        message: document.getElementById("user-input").value
+  };
+  console.log(msg);
+  msg.message = msg.message.trim();
+  msg.name = msg.name.trim();
+  
+  if (msg.name !== '' && msg.message !== '') {
+  
+    postDataToServer(JSON.stringify(msg));
+    document.getElementById("user-input").value = '';
+    document.getElementById("user-name").value = '';
+
+ };
 });
 
 </script>
