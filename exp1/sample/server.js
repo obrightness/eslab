@@ -105,6 +105,7 @@ var postRequestHandler = function (req, res) {
                       res.writeHeader(200, {  'Set-Cookie': 'login=yes', 'Content-Type': 'text/html'});
                       console.log('Cookie Set');
                       res.write('OK');
+                      res.end();
                   }else{
 
                       console.log( 'password: ' + pwd + ' incorrect!');

@@ -48,9 +48,11 @@ var retrieveAllDataFromServer = function () {
 loginBtn.addEventListener('click', function(){
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'http://127.0.0.1:1234/login');
-    xhr.onload = function () {
-    console.log('Got response of POST /login:' +
-        this.responseText);
+    xhr.onreadystatechange = function () {
+        console.log('ready state:' + this.readyState);
+        if(this.readyState == 4){
+            location.reload();
+        }
     };
     data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
     xhr.send(data);    
