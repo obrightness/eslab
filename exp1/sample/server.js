@@ -1,5 +1,6 @@
 var http = require('http');
 var fs = require('fs');
+var cookie = require('cookies');
 
 // For using Redis with Node.js
 // See https://github.com/mranney/node_redis
@@ -20,9 +21,18 @@ redis_user.on('connect', function(){
 
 var getRequestHandler = function (req, res) {
   console.log('Got HTTP GET Request');
-  res.writeHeader(200, { 'Content-Type': 'text/html' });
-  res.write(fs.readFileSync('client.html'));
-  res.end();
+  var my_cookies = cookie(req, res, null);
+  if( my_cookies.get('login') == 'yes' ){
+    console.log('User!');
+    res.writeHeader(200, { 'Content-Type': 'text/html' });
+    res.write(fs.readFileSync('client2.html'));
+    res.end();
+  }else{
+    console.log('Guest!');
+    res.writeHeader(200, { 'Content-Type': 'text/html' });
+    res.write(fs.readFileSync('client.html'));
+    res.writeHeader(200, {})
+  }
 };
 
 var postRequestHandler = function (req, res) {
@@ -92,7 +102,7 @@ var postRequestHandler = function (req, res) {
               }else{
                   if( reply == pwd ){
                       console.log( username + ' login successful with pwd: ' + pwd);
-                      res.writeHeader(200, {  'Set-Cookie': 'username=' + username, 'Content-Type': 'text/html'});
+                      res.writeHeader(200, {  'Set-Cookie': 'login=yes', 'Content-Type': 'text/html'});
                       console.log('Cookie Set');
                       res.write('OK');
                   }else{

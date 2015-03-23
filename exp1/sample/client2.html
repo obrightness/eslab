@@ -4,23 +4,16 @@
 
 
 <h3>留言板</h3>
-username<input id="username" text="username">
-</br>
-password<input id="password" text="password">
-</br>
 <input id="user-input" autofocus>
-
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
 <button id="cookies-btn">Cookies</button>
-<button id="login-btn">Login</button>
+<button id="login-btn">Logout</button>
 <ul id="list-of-data"></ul>
 
 <script>
 
 var inputElm = document.getElementById('user-input');
-var userElm = document.getElementById('username');
-var pwdElm = document.getElementById('password');
 var submitBtn = document.getElementById('submit-btn');
 var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
@@ -46,14 +39,7 @@ var retrieveAllDataFromServer = function () {
 };
 
 loginBtn.addEventListener('click', function(){
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://127.0.0.1:1234/login');
-    xhr.onload = function () {
-    console.log('Got response of POST /login:' +
-        this.responseText);
-    };
-    data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
-    xhr.send(data);    
+    document.cookie = 'login=no;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 });
 
 cookieBtn.addEventListener('click', function() {
@@ -76,18 +62,12 @@ refreshBtn.addEventListener('click', function () {
 
 retrieveAllDataFromServer();
 
-var postDataToServer = function (data) {
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://127.0.0.1:1234/push');
-  xhr.onload = function () {
-    console.log('Got response of POST /push:' +
-        this.responseText);
-  };
-  xhr.send(data);
-};
-
-submitBtn.addEventListener('click', function(){
-    alert('You need to login to leave message!');
+submitBtn.addEventListener('click', function () {
+  inputElm.value = inputElm.value.trim();
+  if (inputElm.value !== '') {
+    postDataToServer(inputElm.value);
+    inputElm.value = '';
+  }
 });
 
 </script>
