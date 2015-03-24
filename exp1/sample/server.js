@@ -20,12 +20,32 @@ redis_user.on('connect', function(){
 
 
 var getRequestHandler = function (req, res) {
-    console.log('Got HTTP GET Request');
-    res.writeHeader(200, { 'Content-Type': 'text/html' });
-    res.write(fs.readFileSync('client.html'));
-    res.end();
-    
-  
+    console.log('Got HTTP GET Request' + req.url);
+    var type = Object.prototype.toString.call(req.url);
+    console.log('url = ' + type);
+    if( req.url === '/'){
+
+        res.writeHeader(200, { 'Content-Type': 'text/html' });
+        res.write(fs.readFileSync('client.html'));
+        res.end();
+    }else if ( req.url.lastIndexOf('/retrieve', 0) === 0 ) {
+        console.log('retrieve!');
+        var num = Number(req.url.substring(10));
+        var type = Object.prototype.toString.call(num);
+        console.log('num = ' + type);
+        redis_client.lrange('all:comments', 0, num-1 , function(err, repl){
+            if (err) {
+                console.log('Error when reading from Redis', err);
+                res.writeHeader(500, { 'Content-Type': 'text/plain' });
+                res.write('Internal Server Error');
+                res.end();
+            } else {
+                res.writeHeader(200, { 'Content-Type': 'application/javascript' });
+                res.write(JSON.stringify(repl));
+                res.end();
+            }
+        });
+    }
 };
 
 var postRequestHandler = function (req, res) {
@@ -55,23 +75,7 @@ var postRequestHandler = function (req, res) {
       });
     });
 
-  } else if (req.url === '/retrieve') {
-
-      console.log('retrieve!');
-      redis_client.lrange('all:comments', 0, -1, function(err, repl){
-      if (err) {
-        console.log('Error when reading from Redis', err);
-        res.writeHeader(500, { 'Content-Type': 'text/plain' });
-        res.write('Internal Server Error');
-        res.end();
-      } else {
-        res.writeHeader(200, { 'Content-Type': 'application/javascript' });
-        res.write(JSON.stringify(repl));
-        res.end();
-      }
-    });
-
-  }else if(req.url === '/login' ){
+  } else if(req.url === '/login' ){
       console.log('login!');
 
       var info, username, pwd;

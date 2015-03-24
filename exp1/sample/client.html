@@ -13,6 +13,14 @@ password<input id="password" text="password">
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
 <button id="login-btn">Login</button>
+</br>
+<B>message perpage</B>
+<select id='num-to-display'>
+    <option selected value=10>10</option>
+    <option value=20>20</option>
+    <option value=30>30</option>
+    <option value=40>40</option>
+</select>
 <ul id="list-of-data"></ul>
 
 <script>
@@ -24,6 +32,7 @@ var submitBtn = document.getElementById('submit-btn');
 var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
 var loginBtn = document.getElementById('login-btn');
+var numToDisplay = document.getElementById('num-to-display');
 
 function readCookie(name) {
     var nameEQ = name + "=";
@@ -46,8 +55,9 @@ var loginAppearance = function(){
 
 };
 var retrieveAllDataFromServer = function () {
+  console.log('retrieveAllDataFromServer');
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://127.0.0.1:1234/retrieve');
+  xhr.open('GET', 'http://127.0.0.1:1234/retrieve?' + numToDisplay.value);
   xhr.onload = function () {
     console.log('Got response of HTTP POST /retrieve:' +
         this.responseText);
