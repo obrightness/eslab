@@ -105,4 +105,36 @@ submitBtn.addEventListener('click', function () {
  };
 });
 
+var sorter = {
+	"currentType": "time",
+	"currentOrder": "asc",
+	"sortConfig":{
+		"time":{ "columnIndex":0 },
+		"name":{ "columnIndex":1 },
+		"message":{ "columnIndex":2 } }
+	"sortBy": function(t){
+	  if(this.currentType == t){
+	     this.currentOrder = (this.currentOrder == "asc"?"desc" : "asc"); 
+          }
+	  else{
+	     this.currentType = t;
+  	  }
+          var keyCellIndex = this.sortConfig[this.currentType].columnIndex;
+ 	  var funcSort = this["funcSort" + this.currentOrder];
+	  this.doSort(keyCellIndex, funcSort);
+	}
+	       
+	"funcSort_desc": function(a,b){
+	  return a.key - b.key;
+	}
+	"funcSort_asc": function(a,b){
+	  return b.key - a.key;
+	}
+	"getRows": function(){
+	   var tbody = this.getTbody();
+	   var rows = tbody.getElementByTagName('tr');
+ 	   return rows;
+	}
+}
+
 </script>
