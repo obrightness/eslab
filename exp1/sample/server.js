@@ -15,6 +15,10 @@ var redis_user = redis.createClient();
 //redis.debug_mode = true;
 redis_user.on('connect', function(){
     redis_user.set('admin', 'pwd');
+    redis_user.set('Bob', 'pwd');
+    redis_user.set('Alice', 'pwd');
+    redis_user.set('Dan', 'pwd');
+
 });
 
 
@@ -57,6 +61,7 @@ var postRequestHandler = function (req, res) {
     var post_request_body = '';
 
     req.on('data', function (data) {
+	console.log(data);
       post_request_body += data;
     });
 
@@ -67,8 +72,7 @@ var postRequestHandler = function (req, res) {
           res.write('Internal Server Error');
           res.end();
         } else {
-          res.writeHeader(200, {  'Set-Cookie': 'username=1', 'Content-Type': 'text/html'});
-          console.log('Cookie Set');
+          res.writeHeader(200, {'Content-Type': 'text/html'});
           res.write('OK');
           res.end();
         }
@@ -99,7 +103,7 @@ var postRequestHandler = function (req, res) {
               }else{
                   if( reply == pwd ){
                       console.log( username + ' login successful with pwd: ' + pwd);
-                      res.writeHeader(200, {  'Set-Cookie': 'login=yes', 'Content-Type': 'text/html'});
+                      res.writeHeader(200, {  'Set-Cookie': 'login=yes;username=' + username , 'Content-Type': 'text/html'});
                       console.log('Cookie Set');
                       res.write('OK');
                       res.end();
