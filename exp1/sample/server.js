@@ -103,7 +103,7 @@ var postRequestHandler = function (req, res) {
               }else{
                   if( reply == pwd ){
                       console.log( username + ' login successful with pwd: ' + pwd);
-                      res.writeHeader(200, {  'Set-Cookie': 'login=yes;username=' + username , 'Content-Type': 'text/html'});
+                      res.writeHeader(200, {  'Set-Cookie': 'login=yes&username=' + username , 'Content-Type': 'text/html'});
                       console.log('Cookie Set');
                       res.write('OK');
                       res.end();
