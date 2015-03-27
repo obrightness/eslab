@@ -33,24 +33,29 @@
 
 </br> </br>
 <table id="Table" style="boder-bottom-style:none;border-width:3px;border-style:dashed;border-color:#FFAC55">
+<thead>
 <tr>
-   <td bgcolor="#ffebcd" align="center" width="50%">
-   <font size="2" color="#FFFFFF">時間</font>
+   <td bgcolor="#ffebcd" align="center" width="48%" class="time">
+   <font size="2" color="#000000" onclick="sort_table(Tbodysort, 0, asc1); asc1 *= -1; asc2 = 1; asc3 = 1">時間</font>
    </td>
 
-   <td bgcolor="#ffebcd" width="30%" align="center">
-   <font size="2" color="#FFFFFF">留言人</font>
+   <td bgcolor="#ffebcd" width="30%" align="center" class="name">
+   <font size="2" color="#000000" onclick="sort_table(Tbodysort, 1, asc2); asc2 *= -1; asc3 = 1; asc1 = 1">留言人</font>
    </td>
 
-   <td bgcolor="#ffebcd" align="center">
-   <font size="2" color="#FFFFFF">留言</font>
+   <td bgcolor="#ffebcd" align="center" class="message">
+   <font size="2" color="#000000" onclick="sort_table(Tbodysort, 2, asc3); asc3 *= -1; asc1 = 1; asc2 = 1">留言</font>
    </td>
 </tr>
-</table>
+</thead>
+<tbody id="Tbodysort">
 
+</tbody>
+</table>
 
 <script>
 
+var asc1 = 1, asc2 = 1, asc3 = 1;
 var inputElm = document.getElementById('user-input');
 var userElm = document.getElementById('username');
 var pwdElm = document.getElementById('password');
@@ -59,7 +64,6 @@ var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
 var loginBtn = document.getElementById('login-btn');
 var numToDisplay = document.getElementById('num-to-display');
-
 
 function readCookie(name) {
     var nameEQ = name + "=";
@@ -99,8 +103,8 @@ var retrieveAllDataFromServer = function () {
 
 	   var test = JSON.parse(arr[i]);
         
-	   var table = document.getElementById("Table");
-           var row = table.insertRow(i+1);
+	   var table = document.getElementById("Table").getElementsByTagName('tbody')[0];
+           var row = table.insertRow(i);
            var liTime = row.insertCell(0);
   	   var slitime = test.time.slice(0,24);
            liTime.innerHTML = slitime;
@@ -109,6 +113,7 @@ var retrieveAllDataFromServer = function () {
            var liElm = row.insertCell(2);
            liElm.innerHTML = test.message;   
     }
+//    var Tbodysort = document.getElememtById('Tbodysort');
   };
   xhr.send();
 };
@@ -163,7 +168,7 @@ submitBtn.addEventListener('click', function () {
         var msg = { 
             time: Date(),
             name: readCookie('username'), 
-            message: document.getElementById("user-input").value
+	    message: document.getElementById("user-input").value
         };
         console.log(msg);
         msg.message = msg.message.trim();
@@ -179,36 +184,25 @@ submitBtn.addEventListener('click', function () {
      }
 });
 
-var sorter = {
-	"currentType": "time",
-	"currentOrder": "asc",
-	"sortConfig":{
-		"time":{ "columnIndex":0 },
-		"name":{ "columnIndex":1 },
-		"message":{ "columnIndex":2 } }
-	"sortBy": function(t){
-	  if(this.currentType == t){
-	     this.currentOrder = (this.currentOrder == "asc"?"desc" : "asc"); 
-          }
-	  else{
-	     this.currentType = t;
-  	  }
-          var keyCellIndex = this.sortConfig[this.currentType].columnIndex;
- 	  var funcSort = this["funcSort" + this.currentOrder];
-	  this.doSort(keyCellIndex, funcSort);
-	}
-	       
-	"funcSort_desc": function(a,b){
-	  return a.key - b.key;
-	}
-	"funcSort_asc": function(a,b){
-	  return b.key - a.key;
-	}
-	"getRows": function(){
-	   var tbody = this.getTbody();
-	   var rows = tbody.getElementByTagName('tr');
- 	   return rows;
-	}
+function sort_table(tbody, col, asc){
+     var rows = tbody.rows,
+	 rlen = rows.length,
+	 arr1 = new Array();
+     for (var i = 0; i < rlen; i++){
+	 var cells = rows[i].cells;
+	 var clen = cells.length;
+	 arr1[i] = new Array();
+	 for (var j = 0; j < clen; j++){
+	 	arr1[i][j] = cells[j].innerHTML;
+	 }
+     }
+     arr1.sort(function (a,b){
+	 return (a[col] == b[col]) ? 0 : ((a[col] > b[col]) ? asc : -1*asc);
+     });//sorts the values according to the returned value.
+     for (var i = 0; i < rlen; i++){
+	 rows[i].innerHTML = "<td>" + arr1[i].join("</td><td>") + "</td>";
+     }
+
 }
 
 </script>
