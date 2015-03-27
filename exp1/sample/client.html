@@ -6,9 +6,9 @@
 <h3>留言板</h3>
 <div id='login-input' >
     </br>
-    username<input id="username" text="username">
+    username<input id="username" type='text'>
     </br>
-    password<input id="password" text="password">
+    password<input id="password" type="password" onkeydown="if (event.keyCode == 13) loginBtn.click()">
     </br>
 </div>
 <div id='msg-input'>
@@ -23,7 +23,7 @@
 <button id="login-btn">Login</button>
 </br>
 
-<img id='sticker' height='42' width='42'></img>
+<img id='sticker' height='42' width='42' src='' display='none'></img>
 </br>
 <div id='sticker-area'>
 select sticker:
@@ -35,7 +35,7 @@ select sticker:
 </br>
 
 <B>message perpage</B>
-<select id='num-to-display'>
+<select id='num-to-display' onchange='refreshBtn.click()'>
     <option selected value=10>10</option>
     <option value=20>20</option>
     <option value=30>30</option>
@@ -79,12 +79,13 @@ function addStickerListener(){
     for( var i=0; i<stickers.length; ++i){
         var st = stickers[i]; 
         st.addEventListener('click', function(){
-                sticker.src = this.src;
+                sticker.src = 'http://127.0.0.1:1234/stickers/' + this.getAttribute("data-idx");
                 sticker.style.display = 'inline';
                 console.log('sticker' + i + ' clicked!');
                 document.getElementById('sticker-area').style.display = 'none';
         });
     }
+    sticker.style.display = 'none';
     sticker.addEventListener('click', function(){
         sticker.style.display = 'none';
         sticker.src = '';
@@ -95,7 +96,7 @@ function addStickerListener(){
 function readCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split('&');
-    console.log(ca)
+    console.log(ca);
     for(var i=0;i < ca.length;i++) {
             var c = ca[i];
             while (c.charAt(0)==' ') c = c.substring(1,c.length);
@@ -109,11 +110,14 @@ var loginAppearance = function(){
         document.getElementById("login-input").style.display = 'none';
         document.getElementById("msg-input").style.display = 'block';
         submitBtn.style.display = 'inline';
+        document.getElementById("sticker-area").style.display = 'block';
     }else{
         document.getElementById("login-btn").childNodes[0].nodeValue="Login";
         document.getElementById("login-input").style.display = 'block';
         document.getElementById("msg-input").style.display = 'none';
         submitBtn.style.display = 'none';
+        document.getElementById("sticker-area").style.display = 'none';
+        sticker.style.display = 'none';
     }
 
 };
@@ -131,7 +135,7 @@ var retrieveAllDataFromServer = function () {
 
 	   var test = JSON.parse(arr[i]);
         
-	   var table = document.getElementById("Table");
+       var table = document.getElementById('Table');
            var row = table.insertRow(i+1);
            var liTime = row.insertCell(0);
   	   var slitime = test.time.slice(0,24);
@@ -176,7 +180,7 @@ loginBtn.addEventListener('click', function(){
 
 refreshBtn.addEventListener('click', function () {
   var num = document.getElementById("Table").rows.length;
-  while(document.getElementById("Table").rows.length > 2){
+  while(document.getElementById("Table").rows.length > 1){
     for(i = 1; i < num; i++){
       document.getElementById("Table").deleteRow(-1);
   }}
@@ -203,8 +207,12 @@ submitBtn.addEventListener('click', function () {
             time: Date(),
             name: readCookie('username'), 
             message: document.getElementById("user-input").value,
-            img: sticker.src
         };
+        if( sticker.style.display == 'none' ){
+            msg.img = '';
+        }else {
+            msg.img = sticker.src;
+        }
         console.log(msg);
         msg.message = msg.message.trim();
         msg.name = msg.name.trim();
@@ -215,6 +223,7 @@ submitBtn.addEventListener('click', function () {
             
         }
         sticker.click();
+        refreshBtn.click();
     }else{
         alert('You need to login to leave message!');
      }
