@@ -23,6 +23,17 @@
 <button id="login-btn">Login</button>
 </br>
 
+<img id='sticker' height='42' width='42'></img>
+</br>
+<div id='sticker-area'>
+select sticker:
+<img name='stickers' height="42" width="42" id="sticker1" data-idx=1 src="http://127.0.0.1:1234/stickers/1"></img>
+<img name='stickers' height="42" width="42" id="sticker2" data-idx=2 src="http://127.0.0.1:1234/stickers/2"></img>
+<img name='stickers' height="42" width="42" id="sticker3" data-idx=3 src="http://127.0.0.1:1234/stickers/3"></img>
+<img name='stickers' height="42" width="42" id="sticker4" data-idx=4 src="http://127.0.0.1:1234/stickers/4"></img>
+</div>
+</br>
+
 <B>message perpage</B>
 <select id='num-to-display'>
     <option selected value=10>10</option>
@@ -59,7 +70,27 @@ var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
 var loginBtn = document.getElementById('login-btn');
 var numToDisplay = document.getElementById('num-to-display');
+var sticker = document.getElementById('sticker');
 
+
+
+function addStickerListener(){
+    var stickers = document.getElementsByName('stickers');
+    for( var i=0; i<stickers.length; ++i){
+        var st = stickers[i]; 
+        st.addEventListener('click', function(){
+                sticker.src = this.src;
+                sticker.style.display = 'inline';
+                console.log('sticker' + i + ' clicked!');
+                document.getElementById('sticker-area').style.display = 'none';
+        });
+    }
+    sticker.addEventListener('click', function(){
+        sticker.style.display = 'none';
+        sticker.src = '';
+        document.getElementById('sticker-area').style.display = 'block';
+    });
+}
 
 function readCookie(name) {
     var nameEQ = name + "=";
@@ -108,7 +139,13 @@ var retrieveAllDataFromServer = function () {
 	   var liName = row.insertCell(1);
            liName.innerHTML = test.name;
            var liElm = row.insertCell(2);
-           liElm.innerHTML = test.message;   
+           if( test.img != '' ){
+                var imgview = '<img height="25" width="25" src=' + test.img + '></img>';
+                liElm.innerHTML = test.message + imgview;
+           }else{
+                liElm.innerHTML = test.message;
+           }
+
     }
   };
   xhr.send();
@@ -148,6 +185,7 @@ refreshBtn.addEventListener('click', function () {
 
 retrieveAllDataFromServer();
 loginAppearance();
+addStickerListener();
 
 var postDataToServer = function (data) {
   var xhr = new XMLHttpRequest();
@@ -164,17 +202,19 @@ submitBtn.addEventListener('click', function () {
         var msg = { 
             time: Date(),
             name: readCookie('username'), 
-            message: document.getElementById("user-input").value
+            message: document.getElementById("user-input").value,
+            img: sticker.src
         };
         console.log(msg);
         msg.message = msg.message.trim();
         msg.name = msg.name.trim();
-        if (msg.name !== '' && msg.message !== '') {
+        if ( !(msg.message == '' && msg.img == '') ) {
         
             postDataToServer(JSON.stringify(msg));
             document.getElementById("user-input").value = '';
             
         }
+        sticker.click();
     }else{
         alert('You need to login to leave message!');
      }

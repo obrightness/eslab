@@ -49,6 +49,13 @@ var getRequestHandler = function (req, res) {
                 res.end();
             }
         });
+    }else if( req.url.lastIndexOf('/stickers', 0) === 0 ){
+        var idx = Number(req.url.substring(10));
+        console.log('requested sticker: '+ idx);
+        file = fs.readFileSync('./stickers/sticker'+idx + '.jpeg');
+        res.writeHeader(200, { 'Content-Type': 'image/jpeg'});
+        res.write(file, 'binary');
+        res.end();
     }
 };
 
