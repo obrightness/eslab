@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<title>Test Client Web Page</title>
+<meta charset="utf-8">
+
+
+<h3>留言板</h3>
+<div id='login-input' >
+    </br>
+    username<input id="username" type='text'>
+    </br>
+    password<input id="password" type="password" onkeydown="if (event.keyCode == 13) loginBtn.click()">
+    </br>
+</div>
+<div id='msg-input'>
+    </br> </br>
+    <font size="2" color="#000000">留言內容 </font>
+    <input id="user-input" autofocus>
+    </br> </br>
+</div>
+
+<button id="submit-btn">Submit</button>
+<button id="refresh-btn">Refresh</button>
+<button id="login-btn">Login</button>
+<button id='register-btn'>Register</button>
+</br>
+
+<img id='sticker' height='42' width='42' src='' display='none'></img>
+</br>
+<div id='sticker-area'>
+select sticker:
+<img name='stickers' height="42" width="42" id="sticker1" data-idx=1 src="http://127.0.0.1:1234/stickers/1"></img>
+<img name='stickers' height="42" width="42" id="sticker2" data-idx=2 src="http://127.0.0.1:1234/stickers/2"></img>
+<img name='stickers' height="42" width="42" id="sticker3" data-idx=3 src="http://127.0.0.1:1234/stickers/3"></img>
+<img name='stickers' height="42" width="42" id="sticker4" data-idx=4 src="http://127.0.0.1:1234/stickers/4"></img>
+</div>
+</br>
+
+<B>message perpage</B>
+<select id='num-to-display' onchange='refreshBtn.click()'>
+    <option selected value=10>10</option>
+    <option value=20>20</option>
+    <option value=30>30</option>
+    <option value=40>40</option>
+</select>
+
+</br> </br>
+<table id="Table" style="boder-bottom-style:none;border-width:3px;border-style:dashed;border-color:#FFAC55">
+<thead>
+<tr>
+   <td bgcolor="#ffebcd" align="center" width="52%" class="time" colspan="2">
+   <font size="2" color="#000000" onclick="sort_table(Tbodysort, 1, asc1); asc1 *= -1; asc2 = 1; asc3 = 1">時間</font>
+   </td>
+
+   <td bgcolor="#ffebcd" width="30%" align="center" class="name">
+   <font size="2" color="#000000" onclick="sort_table(Tbodysort, 2, asc2); asc2 *= -1; asc3 = 1; asc1 = 1">留言人</font>
+   </td>
+
+   <td bgcolor="#ffebcd" align="center" class="message">
+   <font size="2" color="#000000" onclick="sort_table(Tbodysort, 3, asc3); asc3 *= -1; asc1 = 1; asc2 = 1">留言</font>
+   </td>
+</tr>
+</thead>
+<tbody id="Tbodysort">
+
+</tbody>
+</table>
+
+<script>
+
+var asc1 = 1, asc2 = 1, asc3 = 1;
+var inputElm = document.getElementById('user-input');
+var userElm = document.getElementById('username');
+var pwdElm = document.getElementById('password');
+var submitBtn = document.getElementById('submit-btn');
+var refreshBtn = document.getElementById('refresh-btn');
+var listElm = document.getElementById('list-of-data');
+var loginBtn = document.getElementById('login-btn');
+var registerBtn = document.getElementById('register-btn');
+var numToDisplay = document.getElementById('num-to-display');
+var sticker = document.getElementById('sticker');
+
+
+
+function addStickerListener(){
+    var stickers = document.getElementsByName('stickers');
+    for( var i=0; i<stickers.length; ++i){
+        var st = stickers[i]; 
+        st.addEventListener('click', function(){
+                sticker.src = 'http://127.0.0.1:1234/stickers/' + this.getAttribute("data-idx");
+                sticker.style.display = 'inline';
+                console.log('sticker' + i + ' clicked!');
+                document.getElementById('sticker-area').style.display = 'none';
+        });
+    }
+    sticker.style.display = 'none';
+    sticker.addEventListener('click', function(){
+        sticker.style.display = 'none';
+        sticker.src = '';
+        document.getElementById('sticker-area').style.display = 'block';
+    });
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split('&');
+    console.log(ca);
+    for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+    return null;
+}
+var loginAppearance = function(){
+    if(readCookie('login') == 'yes'){
+        document.getElementById("login-btn").childNodes[0].nodeValue="Logout";
+        registerBtn.style.display = 'none';
+        document.getElementById("login-input").style.display = 'none';
+        document.getElementById("msg-input").style.display = 'block';
+        submitBtn.style.display = 'inline';
+        document.getElementById("sticker-area").style.display = 'block';
+    }else{
+        document.getElementById("login-btn").childNodes[0].nodeValue="Login";
+        registerBtn.style.display = 'block';
+        document.getElementById("login-input").style.display = 'block';
+        document.getElementById("msg-input").style.display = 'none';
+        submitBtn.style.display = 'none';
+        document.getElementById("sticker-area").style.display = 'none';
+        sticker.style.display = 'none';
+    }
+
+};
+var retrieveAllDataFromServer = function () {
+  console.log('retrieveAllDataFromServer');
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'http://127.0.0.1:1234/retrieve?' + numToDisplay.value);
+  xhr.onload = function () {
+    console.log('Got response of HTTP POST /retrieve:' +
+        this.responseText);
+
+    var JSON_string = this.responseText;
+    var arr = JSON.parse(JSON_string);
+    for (var i = 0; i < arr.length; i += 1) {
+
+	   var test = JSON.parse(arr[i]);
+        
+	   var table = document.getElementById("Table").getElementsByTagName('tbody')[0];
+           var row = table.insertRow(i);
+           var timeText = test.time.slice(0,7);
+           var timeNum = test.time.slice(8,24);
+
+           var liTimeText = row.insertCell(0);
+           liTimeText.innerHTML =  timeText;
+           var liTimeNum = row.insertCell(1);
+           liTimeNum.innerHTML = timeNum; 
+	   var liName = row.insertCell(2);
+           liName.innerHTML = test.name;
+           var liElm = row.insertCell(3);
+           if( test.img != '' ){
+                var imgview = '<img height="25" width="25" src=' + test.img + '></img>';
+                liElm.innerHTML = test.message + imgview;
+           }else{
+                liElm.innerHTML = test.message;
+           }
+
+    }
+//    var Tbodysort = document.getElememtById('Tbodysort');
+  };
+  xhr.send();
+};
+
+registerBtn.addEventListener('click', function(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:1234/register');
+        xhr.onreadystatechange = function () {
+            console.log('ready state:' + this.readyState);
+            if(this.readyState == 4){
+                if(this.status == 200){
+                    console.log('register successful');
+                    alert('OK!');
+               }else if(this.status == 500){
+                    console.log('register fail!');
+                    alert('Username already used!');
+               }    
+            }
+        };
+        data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
+        xhr.send(data);    
+ 
+});
+loginBtn.addEventListener('click', function(){
+    if( readCookie('login') == 'yes' ){
+        document.cookie = 'login=no;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        userElm.value='';
+        pwdElm.value='';
+        loginAppearance();
+    }else{
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:1234/login');
+        xhr.onreadystatechange = function () {
+            console.log('ready state:' + this.readyState);
+            if(this.readyState == 4){
+                if(this.status == 200){
+                console.log('login successful');
+                loginAppearance();
+                }
+            }
+        };
+        data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
+        xhr.send(data);    
+    }
+});
+
+refreshBtn.addEventListener('click', function () {
+  var num = document.getElementById("Table").rows.length;
+  while(document.getElementById("Table").rows.length > 1){
+    for(i = 1; i < num; i++){
+      document.getElementById("Table").deleteRow(-1);
+  }}
+  retrieveAllDataFromServer();
+});
+
+retrieveAllDataFromServer();
+loginAppearance();
+addStickerListener();
+
+var postDataToServer = function (data) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://127.0.0.1:1234/push');
+  xhr.onload = function () {
+    console.log('Got response of POST /push:' +
+        this.responseText);
+  };
+  xhr.send(data);
+};
+
+submitBtn.addEventListener('click', function () {
+    if( readCookie('login') == 'yes' ){
+        var msg = { 
+            time: Date(),
+            name: readCookie('username'), 
+            message: document.getElementById("user-input").value
+        }; console.log(msg.time);
+        
+	
+        if( sticker.style.display == 'none' ){
+            msg.img = '';
+        }else {
+            msg.img = sticker.src;
+        }
+        console.log(msg);
+        msg.message = msg.message.trim();
+        msg.name = msg.name.trim();
+        if ( !(msg.message == '' && msg.img == '') ) {
+        
+            postDataToServer(JSON.stringify(msg));
+            document.getElementById("user-input").value = '';
+            
+        }
+        sticker.click();
+        refreshBtn.click();
+    }else{
+        alert('You need to login to leave message!');
+     }
+});
+
+function sort_table(tbody, col, asc){
+     var rows = tbody.rows,
+	 rlen = rows.length,
+	 arr1 = new Array();
+
+     for (var i = 0; i < rlen; i++){
+	 var cells = rows[i].cells;
+	 var clen = cells.length;
+	 arr1[i] = new Array();
+	 arr1[i][0] = cells[0].innerHTML;
+         for (var j = 1; j < clen; j++){
+	 	arr1[i][j] = cells[j].innerHTML;
+	 }
+     }
+     
+     arr1.sort(function (a,b){
+	 return (a[col] == b[col]) ? 0 : ((a[col] > b[col]) ? asc : -1*asc);
+     });//sorts the values according to the returned value.
+     
+     for (var i = 0; i < rlen; i++){
+	 rows[i].innerHTML = "<td>" + arr1[i].join("</td><td>") + "</td>";
+     }
+
+};
+
+</script>
