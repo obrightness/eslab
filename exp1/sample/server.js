@@ -125,6 +125,37 @@ var postRequestHandler = function (req, res) {
               }
           });
       });
+  } else if(req.url === '/register' ){
+      console.log('register!');
+
+      var info, username, pwd;
+      req.on('data', function(data){
+        console.log(data);
+        info = data.toString().split(';');
+        console.log(info);
+        username = info[0].toString().substring(9);
+        pwd = info[1].toString().substring(5);
+        console.log(info);
+      });
+      req.on('end', function(data){
+          console.log(username + ' try to register');
+          redis_user.get(username, function(err, reply){
+              if( reply == null ){
+
+                  console.log( username + ' OK!');
+                  redis_user.set( username, pwd );
+                  res.writeHeader(200, { 'Content-Type': 'text/plain' });
+                  res.write('OK');
+                  res.end();
+              }else{
+                      console.log(username + 'already used!!' );
+                      res.writeHeader(500, { 'Content-Type': 'text/plain' });
+                      res.write('User name already registerd!');
+                      res.end();
+              }
+          });
+      });
+  
   }else{
     console.log('undefined ' + req.url);
   }

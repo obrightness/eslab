@@ -21,6 +21,7 @@
 <button id="submit-btn">Submit</button>
 <button id="refresh-btn">Refresh</button>
 <button id="login-btn">Login</button>
+<button id='register-btn'>Register</button>
 </br>
 
 <img id='sticker' height='42' width='42' src='' display='none'></img>
@@ -74,6 +75,7 @@ var submitBtn = document.getElementById('submit-btn');
 var refreshBtn = document.getElementById('refresh-btn');
 var listElm = document.getElementById('list-of-data');
 var loginBtn = document.getElementById('login-btn');
+var registerBtn = document.getElementById('register-btn');
 var numToDisplay = document.getElementById('num-to-display');
 var sticker = document.getElementById('sticker');
 
@@ -112,12 +114,14 @@ function readCookie(name) {
 var loginAppearance = function(){
     if(readCookie('login') == 'yes'){
         document.getElementById("login-btn").childNodes[0].nodeValue="Logout";
+        registerBtn.style.display = 'none';
         document.getElementById("login-input").style.display = 'none';
         document.getElementById("msg-input").style.display = 'block';
         submitBtn.style.display = 'inline';
         document.getElementById("sticker-area").style.display = 'block';
     }else{
         document.getElementById("login-btn").childNodes[0].nodeValue="Login";
+        registerBtn.style.display = 'block';
         document.getElementById("login-input").style.display = 'block';
         document.getElementById("msg-input").style.display = 'none';
         submitBtn.style.display = 'none';
@@ -165,6 +169,25 @@ var retrieveAllDataFromServer = function () {
   xhr.send();
 };
 
+registerBtn.addEventListener('click', function(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:1234/register');
+        xhr.onreadystatechange = function () {
+            console.log('ready state:' + this.readyState);
+            if(this.readyState == 4){
+                if(this.status == 200){
+                    console.log('register successful');
+                    alert('OK!');
+               }else if(this.status == 500){
+                    console.log('register fail!');
+                    alert('Username already used!');
+               }    
+            }
+        };
+        data = 'username=' + userElm.value.trim() + ';pass=' + pwdElm.value.trim();
+        xhr.send(data);    
+ 
+});
 loginBtn.addEventListener('click', function(){
     if( readCookie('login') == 'yes' ){
         document.cookie = 'login=no;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
