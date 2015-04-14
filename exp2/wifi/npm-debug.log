@@ -1,0 +1,195 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install', '-g', 'redis' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.38
+4 verbose node symlink /usr/bin/node
+5 verbose cache add [ 'redis', null ]
+6 verbose cache add name=undefined spec="redis" args=["redis",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'redis',
+7 verbose parsed url   path: 'redis',
+7 verbose parsed url   href: 'redis' }
+8 silly lockFile b840fc02-redis redis
+9 verbose lock redis /home/lou/.npm/b840fc02-redis.lock
+10 silly lockFile b840fc02-redis redis
+11 silly lockFile b840fc02-redis redis
+12 verbose addNamed [ 'redis', '' ]
+13 verbose addNamed [ null, '*' ]
+14 silly lockFile fb3bbc27-redis redis@
+15 verbose lock redis@ /home/lou/.npm/fb3bbc27-redis.lock
+16 silly addNameRange { name: 'redis', range: '*', hasData: false }
+17 verbose request where is /redis
+18 verbose request registry https://registry.npmjs.org/
+19 verbose request id cd25ac40900127fa
+20 verbose url raw /redis
+21 verbose url resolving [ 'https://registry.npmjs.org/', './redis' ]
+22 verbose url resolved https://registry.npmjs.org/redis
+23 verbose request where is https://registry.npmjs.org/redis
+24 info trying registry request attempt 1 at 23:12:18
+25 verbose etag "LO00D7VY6UVJER4V8X994XS5"
+26 http GET https://registry.npmjs.org/redis
+27 http 200 https://registry.npmjs.org/redis
+28 silly registry.get cb [ 200,
+28 silly registry.get   { date: 'Tue, 14 Apr 2015 15:12:19 GMT',
+28 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+28 silly registry.get     etag: '"4D326EM7TCQUXQ9539EL6L7D7"',
+28 silly registry.get     'content-type': 'application/json',
+28 silly registry.get     'cache-control': 'max-age=60',
+28 silly registry.get     'content-length': '87486',
+28 silly registry.get     'accept-ranges': 'bytes',
+28 silly registry.get     via: '1.1 varnish',
+28 silly registry.get     age: '19',
+28 silly registry.get     'x-served-by': 'cache-nrt6130-NRT',
+28 silly registry.get     'x-cache': 'HIT',
+28 silly registry.get     'x-cache-hits': '1',
+28 silly registry.get     'x-timer': 'S1429024339.388277,VS0,VE1',
+28 silly registry.get     vary: 'Accept',
+28 silly registry.get     'keep-alive': 'timeout=10, max=50',
+28 silly registry.get     connection: 'Keep-Alive' } ]
+29 silly addNameRange number 2 { name: 'redis', range: '*', hasData: true }
+30 silly addNameRange versions [ 'redis',
+30 silly addNameRange   [ '0.0.1',
+30 silly addNameRange     '0.0.2',
+30 silly addNameRange     '0.0.3',
+30 silly addNameRange     '0.0.4',
+30 silly addNameRange     '0.0.7',
+30 silly addNameRange     '0.0.8',
+30 silly addNameRange     '0.1.0',
+30 silly addNameRange     '0.1.1',
+30 silly addNameRange     '0.1.2',
+30 silly addNameRange     '0.2.0',
+30 silly addNameRange     '0.2.1',
+30 silly addNameRange     '0.2.2',
+30 silly addNameRange     '0.2.3',
+30 silly addNameRange     '0.2.4',
+30 silly addNameRange     '0.2.6',
+30 silly addNameRange     '0.3.0',
+30 silly addNameRange     '0.3.1',
+30 silly addNameRange     '0.3.2',
+30 silly addNameRange     '0.3.3',
+30 silly addNameRange     '0.3.4',
+30 silly addNameRange     '0.3.5',
+30 silly addNameRange     '0.3.6',
+30 silly addNameRange     '0.3.7',
+30 silly addNameRange     '0.3.9',
+30 silly addNameRange     '0.4.0',
+30 silly addNameRange     '0.4.1',
+30 silly addNameRange     '0.4.2',
+30 silly addNameRange     '0.5.0',
+30 silly addNameRange     '0.5.1',
+30 silly addNameRange     '0.5.2',
+30 silly addNameRange     '0.5.3',
+30 silly addNameRange     '0.5.4',
+30 silly addNameRange     '0.5.5',
+30 silly addNameRange     '0.5.6',
+30 silly addNameRange     '0.5.7',
+30 silly addNameRange     '0.5.8',
+30 silly addNameRange     '0.5.9',
+30 silly addNameRange     '0.5.10',
+30 silly addNameRange     '0.5.11',
+30 silly addNameRange     '0.6.0',
+30 silly addNameRange     '0.6.1',
+30 silly addNameRange     '0.6.2',
+30 silly addNameRange     '0.6.3',
+30 silly addNameRange     '0.6.4',
+30 silly addNameRange     '0.6.5',
+30 silly addNameRange     '0.6.6',
+30 silly addNameRange     '0.6.7',
+30 silly addNameRange     '0.7.0',
+30 silly addNameRange     '0.7.1',
+30 silly addNameRange     '0.7.2',
+30 silly addNameRange     '0.7.3',
+30 silly addNameRange     '0.8.0',
+30 silly addNameRange     '0.8.1',
+30 silly addNameRange     '0.8.2',
+30 silly addNameRange     '0.8.3',
+30 silly addNameRange     '0.8.4',
+30 silly addNameRange     '0.8.5',
+30 silly addNameRange     '0.8.6',
+30 silly addNameRange     '0.9.0',
+30 silly addNameRange     '0.9.1',
+30 silly addNameRange     '0.9.2',
+30 silly addNameRange     '0.10.0',
+30 silly addNameRange     '0.10.1',
+30 silly addNameRange     '0.10.2',
+30 silly addNameRange     '0.10.3',
+30 silly addNameRange     '0.11.0',
+30 silly addNameRange     '0.12.0',
+30 silly addNameRange     '0.12.1' ] ]
+31 verbose addNamed [ 'redis', '0.12.1' ]
+32 verbose addNamed [ '0.12.1', '0.12.1' ]
+33 silly lockFile 5ec46899-redis-0-12-1 redis@0.12.1
+34 verbose lock redis@0.12.1 /home/lou/.npm/5ec46899-redis-0-12-1.lock
+35 silly lockFile 5ec46899-redis-0-12-1 redis@0.12.1
+36 silly lockFile 5ec46899-redis-0-12-1 redis@0.12.1
+37 silly lockFile fb3bbc27-redis redis@
+38 silly lockFile fb3bbc27-redis redis@
+39 silly resolved [ { name: 'redis',
+39 silly resolved     version: '0.12.1',
+39 silly resolved     description: 'Redis client library',
+39 silly resolved     keywords: [ 'redis', 'database' ],
+39 silly resolved     author: { name: 'Matt Ranney', email: 'mjr@ranney.com' },
+39 silly resolved     main: './index.js',
+39 silly resolved     scripts: { test: 'node ./test.js' },
+39 silly resolved     devDependencies: { metrics: '>=0.1.5', colors: '~0.6.0-1', underscore: '~1.4.4' },
+39 silly resolved     repository: { type: 'git', url: 'git://github.com/mranney/node_redis.git' },
+39 silly resolved     bugs: { url: 'https://github.com/mranney/node_redis/issues' },
+39 silly resolved     homepage: 'https://github.com/mranney/node_redis',
+39 silly resolved     _id: 'redis@0.12.1',
+39 silly resolved     _shasum: '64df76ad0fc8acebaebd2a0645e8a48fac49185e',
+39 silly resolved     _from: 'redis@',
+39 silly resolved     _npmVersion: '1.4.9',
+39 silly resolved     _npmUser: { name: 'bryce', email: 'bryce@ravenwall.com' },
+39 silly resolved     maintainers: [ [Object], [Object], [Object] ],
+39 silly resolved     dist:
+39 silly resolved      { shasum: '64df76ad0fc8acebaebd2a0645e8a48fac49185e',
+39 silly resolved        tarball: 'http://registry.npmjs.org/redis/-/redis-0.12.1.tgz' },
+39 silly resolved     directories: {},
+39 silly resolved     _resolved: 'https://registry.npmjs.org/redis/-/redis-0.12.1.tgz',
+39 silly resolved     readme: 'ERROR: No README data found!' } ]
+40 info install redis@0.12.1 into /usr/lib
+41 info installOne redis@0.12.1
+42 verbose lib/node_modules/redis unbuild
+43 verbose tar unpack /home/lou/.npm/redis/0.12.1/package.tgz
+44 silly lockFile 04836253-tar-usr-lib-node-modules-redis tar:///usr/lib/node_modules/redis
+45 verbose lock tar:///usr/lib/node_modules/redis /home/lou/.npm/04836253-tar-usr-lib-node-modules-redis.lock
+46 silly lockFile 72c7916b-lou-npm-redis-0-12-1-package-tgz tar:///home/lou/.npm/redis/0.12.1/package.tgz
+47 verbose lock tar:///home/lou/.npm/redis/0.12.1/package.tgz /home/lou/.npm/72c7916b-lou-npm-redis-0-12-1-package-tgz.lock
+48 silly gunzTarPerm modes [ '775', '664' ]
+49 error Error: EACCES, mkdir '/usr/lib/node_modules/redis'
+49 error  { [Error: EACCES, mkdir '/usr/lib/node_modules/redis']
+49 error   errno: 3,
+49 error   code: 'EACCES',
+49 error   path: '/usr/lib/node_modules/redis',
+49 error   fstream_type: 'Directory',
+49 error   fstream_path: '/usr/lib/node_modules/redis',
+49 error   fstream_class: 'DirWriter',
+49 error   fstream_stack:
+49 error    [ '/usr/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+49 error      '/usr/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+49 error      'Object.oncomplete (fs.js:108:15)' ] }
+50 error Please try running this command again as root/Administrator.
+51 error System Linux 3.13.0-49-generic
+52 error command "/usr/bin/node" "/usr/bin/npm" "install" "-g" "redis"
+53 error cwd /home/lou/eslab/eslab/exp2/wifi
+54 error node -v v0.10.38
+55 error npm -v 1.4.28
+56 error path /usr/lib/node_modules/redis
+57 error fstream_path /usr/lib/node_modules/redis
+58 error fstream_type Directory
+59 error fstream_class DirWriter
+60 error code EACCES
+61 error errno 3
+62 error stack Error: EACCES, mkdir '/usr/lib/node_modules/redis'
+63 error fstream_stack /usr/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+63 error fstream_stack /usr/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+63 error fstream_stack Object.oncomplete (fs.js:108:15)
+64 verbose exit [ 3, true ]
