@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var redis = require('redis');
 
 //var points = {
   //               x: 1,y: 1
@@ -10,6 +11,45 @@ var io = require('socket.io')(http);
   //          };
 //var data = JSON.stringify(points);
 
+// handle post request from tessel board
+app.post('/gps', function(req, res){
+    var data_all = '';
+    req.on('data', function(data){
+        data_all += data.toString();
+    });
+    req.on('end', function(){
+        redis.lpush('gps', data_all );
+    });
+
+});
+
+
+app.post('/accel', function(req, res){
+    var data_all = '';
+    req.on('data', function(data){
+        data_all += data.toString();
+    });
+    req.on('end', function(){
+        redis.lpush('accel', data_all );
+    });
+
+});
+
+app.post('/cam', function(req, res){
+    var name = 'picture-' + Math.floor(Date.now()*1000) + '.jpg';
+    var f=fs.createWriteStream(name);
+    req.on('data', function(data){
+        f.write(data);
+    });
+    req.on('end', function(){
+        redis.lpush('cam', [redis.llen('gps'), name] );
+        f.end();
+    });
+
+});
+
+
+// handle request from browserkk
 app.get('/', function(req, res){
   res.sendfile('index.html');
 });
