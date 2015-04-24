@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ES Lab HW2</title>
+   
+    <h1>Team 10</h1>
+    
+    <table id="tb">
+      <tr>
+	<th>Accelerometer</th>
+	<th>Map & Photo</th>	    
+      </tr>
+      <tr>
+	<td> <img src="/Users/ling/Documents/學校/電機/四下/socket.iotest/001.jpg">  </td> 
+	<td id="mp"> xy points and pic </td>
+      </tr>
+    </table>
+    <style>
+        h1{
+	  margin:30px;
+	  text-align: center;
+	}
+	table{
+	  border: 2;
+	  border-style:double;
+	  font-family: arial;
+	  font-size: 14px;
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	th{
+	  text-align: center;
+	  background-color: #FBF9D0;
+	}
+
+    </style>
+  </head>
+  <body>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+   
+
+
+    <script>
+        var points = [  {"x": 300,"y": 10},
+                   	{"x": 400,"y": 250},
+                   	{"x": 500,"y": 10},
+                   	{"x": 250,"y": 150}, 
+			{"x": 550,"y": 150} ];
+        var datas = JSON.stringify(points);	
+
+	var socket = io();
+	socket.emit('update', datas);
+	socket.on('update', function(data){
+	
+		var dataArr = jQuery.parseJSON(data);
+		var svg = d3.select('body')
+	  			.append('svg')
+	  			.attr({  'width': 800, 'height': 800  });
+	
+		var line = d3.svg.line()
+				  .x(function(d){ return d.x; })
+			          .y(function(d){ return d.y; })
+				  .interpolate("linear-closed");	
+		svg.append('path')
+    			  .attr({
+      				'd': line(dataArr),
+      				'y': 0,
+      				'stroke': '#000',
+      				'stroke-width': '2px',
+      				'fill': 'none'  
+			  })
+ 	
+	
+//		}
+	});
+
+    </script>
+  </body>
+</html>
+
