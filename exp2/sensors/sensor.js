@@ -25,48 +25,62 @@ nrf_handler.prototype = {
     setReady: function(ready){
         this.ready = ready;
     },
+    writeChunk: function(chunk){
+        _this = this;
+        var tmp = new Buffer(chunk.length);
+        chunk.copy(tmp);
+        _this.pipe.write(tmp);
+        //return function(){
+        //    _this.pipe.write(tmp);
+        //}
+    },    
     sendData: function(data){
         if(this.ready != 1){
             console.log(this.name+' not ready');
             return 1;
         }
-        console.log('try to send:' + data.toString());
+        // check empty buffer
+        if(data.length == 0){
+            console.log(this.name + ' empty data !');
+            return 1;
+        }
+        console.log(this.name + ' try to send:' + data.toString());
         // copy data to buf
-        var buf = new Buffer(data.length);
-        data.copy(buf)
-        console.log('1');
-        // Make buf size be multiple of size
-        len = data.length;
-        //div = Math.floor(len/size);
-        //block = new Buffer(len-div*size);
-        //console.log('2');
-        //buf = Buffer.concat([buf, block]);
+        // buf.copy(new_buf) does not make new_buf shrink
+        len = data.length; 
+        var buf = new Buffer((this.size)*(Math.ceil(len/this.size)));
+        buf.fill(0);
+        data.copy(buf);
+        // now buf size is multiple of this.size with 0 append at end
+
         // send data
         console.log(this.name + ' sending data');
 
         // send identifier
         identifier = new Buffer(this.size);
-        identifier.fill(0);
+        identifier.fill(2);
         console.log('sending identifier');
-        this.pipe.write(identifier);
+        this.writeChunk(identifier);
         console.log('identifier done');
+        identifier.fill(3);
 
+        _this = this;
         while(len > 0){
-            pack = buf.slice(0, this.size);
+            var _pack = buf.slice(0, this.size);
             buf = buf.slice(this.size);
             console.log(buf);
-            console.log(pack);
-            this.pipe.write(pack);
+            console.log(_pack);
+            _this.writeChunk(_pack);
             len = buf.length;
             console.log(len);
         }
+        console.log(_pack);
         // send end identifier
         identifier = new Buffer(this.size);
         identifier.fill(1);
         this.pipe.write(identifier);
-        console.log(this.name + ' done');
+        console.log(this.name + ' data done');
     }
-
 };
 /////////////////// end class///////////////////////
 

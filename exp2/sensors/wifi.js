@@ -3,7 +3,7 @@ bufferEqual = require('buffer-equal');
 
 
 // Global Variables
-var pack_size = 32; // this should match the size of tx
+var pack_size = 26; // this should match the size of tx
 
 //////////////////
 //     WIFI     //
@@ -41,7 +41,7 @@ var sendWifi = function(data, type){
 };
 
 /////////////////
-//   NRF_TMP   //
+//   NRF_RX    //
 /////////////////
 
 // this part should be on the other tessel
@@ -57,14 +57,13 @@ var rx_nrf = NRF.channel(0x4c) // set the RF channel to 76. Frequency = 2400 + R
     .use(tessel.port['D']);
 
 rx_nrf._debug = false;
-
 var nrf_handler = function(ready, name){
     this.name = name;
     this.ready = ready;
     this.ident = new Buffer(this.size);
-    this.ident.fill(0);
+    this.ident.fill(2);
     this.end = new Buffer(this.size);
-    this.end.fill(1);
+    this.end.fill(3);
     _this = this;
     console.log('rx_nrf_handler ' + name + ' created');
 };
@@ -80,38 +79,42 @@ nrf_handler.prototype = {
     data: '',
     ident: '',
     end: '',
+    state: 0, // 0: waiting, 1:pending
     setPipe: function(pipe){
         this.pipe = pipe;
-        pipe.on('ready', function(){
-            _this.setReady(1); 
-            console.log('nrf handler ' + this.name + ' ready.');
-        });
-        pipe.on('data', function(data){
-            console.log(this.name + ' get data');
-            this.handleData(data);
-        });
+        this.setReady(1); 
+        console.log('nrf handler ' + this.name + ' ready.');
     },
     setReady: function(ready){
         this.ready = ready;
     },
     handleData: function(data){
         // copy data to buf
-        data.copy(buf)
+        buf = new Buffer(data.length);
+        data.copy(buf);
         // check indentify package
-        if( bufferEqual(data, ident) ){
+        if( bufferEqual(data, this.ident) ){
             // data start
-            this.data = new Buffer();
+            console.log('start');
+            this.state = 1;
+            this.data = new Buffer(0);
             return 0;
         }
         // check end package
-        if( bufferEqual(data, end) ){
-            // data end
-            sendWifi(this.data, this.name);
+        if( bufferEqual(data, this.end) ){
+            if(this.state){
+                // data end
+                sendWifi(this.data, this.name);
+                this.state = 0;
+                console.log('end');
+            }
+            return 0;
+        }
         
         // append data
-        this.data = Buffer.concat(this.data, data);
+        this.data = Buffer.concat([this.data, data]);
+        console.log('appended ' + this.data.toString());
 
-        }
     }
 };
 var nrf_gps      = new nrf_handler(0, 'gps');
