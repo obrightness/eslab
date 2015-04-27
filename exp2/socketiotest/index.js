@@ -30,10 +30,9 @@ io.on('connection', function(socket){
   socket.emit('newphoto');
   socket.on('photo', function(){
 	var imgname = '/Users/ling/Documents/eslab/exp2/socketiotest/001.jpg';
-//	console.log("收到要photo的emit了");
-	fs.readFile(imgname, 'utf8', function(err, img){
+	fs.readFile(imgname, 'base64', function(err, img){
 		if (err) throw err;
-		socket.emit('image', {content: img});
+		socket.emit('image', {content: 'data:image/jpg;base64,'+img});
 
     });
   });

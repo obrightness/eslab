@@ -15,7 +15,7 @@
       <tr>
 	<td> <div id="Ac"> </div> </td> 
 	<td> <div id="mp"> </div></td>
-        <td> <img id="box" src="pic" ><canvas id='canvas'></canvas>  </td>
+        <td> <img id="box" src="" ></img>  </td>
       </tr>
     </table>
 
@@ -64,9 +64,7 @@
 	
     var socket = io.connect();
         socket.on('newphoto', function(){
-//   	console.log("收到有新photo的emit了");
 	socket.emit('photo');
-	document.getElementById('box').innerHTML = "";
 	
 
 	socket.on('image', function(img){
@@ -74,18 +72,21 @@
 		imgObj.src = img.content;
 	console.log(img);
 //	console.log(imgObj);		 
-		var canvas = document.createElement("canvas");
-		canvas.width = 250;
-		canvas.height = 500;
+		//var canvas = document.createElement("img");
+		//canvas.width = 250;
+		//canvas.height = 500;
+		//canvas.src = img.content;
 
-		document.getElementById('box').innerHTML = canvas;
-		var ctx = canvas.getContext('2d');
-		ctx.drawImage(imgObj, 0 ,0 );
+		//var ctx = canvas.getContext('2d');
+		//ctx.drawImage(imgObj, 0 ,0 );
+		document.getElementById('box').src = img.content;
+		//console.log(canvas);
+		console.log(document.getElementById('box'));
 		
-console.log(ctx);
+//console.log(ctx);
 
-		var dataURL = canvas.toDataURL('image/jpg');
-		dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+	//	var dataURL = canvas.toDataURL('image/jpg');
+	//	dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
 
 //為何沒有圖但是有canvas~~~~~~		
 /*
