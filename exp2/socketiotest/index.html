@@ -36,16 +36,11 @@
 	  text-align: center;
 	  background-color: #FBF9D0;
 	}
-	.box{
-	  height: 500px;
+	#box{
+	  height: 250px;
 	  width: 250px;
 	}
-	.box img{
-	  position: absolute;
-	  top:0;
-	  left:0;
-	  right: 0;
-	  bottom: 0;
+	img{
 	  margin: auto;
 	  height: 50%;
 	  width: 50%; 
@@ -63,42 +58,14 @@
     <script>
 	
     var socket = io.connect();
-        socket.on('newphoto', function(){
-	socket.emit('photo');
 	
 
 	socket.on('image', function(img){
-		var imgObj = new Image();
-		imgObj.src = img.content;
-	console.log(img);
-//	console.log(imgObj);		 
-		//var canvas = document.createElement("img");
-		//canvas.width = 250;
-		//canvas.height = 500;
-		//canvas.src = img.content;
 
-		//var ctx = canvas.getContext('2d');
-		//ctx.drawImage(imgObj, 0 ,0 );
 		document.getElementById('box').src = img.content;
-		//console.log(canvas);
 		console.log(document.getElementById('box'));
 		
-//console.log(ctx);
-
-	//	var dataURL = canvas.toDataURL('image/jpg');
-	//	dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-
-//為何沒有圖但是有canvas~~~~~~		
-/*
-var x = document.getElementById('box');
-var y = x.cells;
-//var Img = document.createElement('img');
-//Img.src = img.content ;
-y.appendChild(imgObj);
-*/
-
 	});
-    });
 
     socket.on('update', function(data){
 
@@ -106,7 +73,7 @@ y.appendChild(imgObj);
 		    line_data = data.data;
 		    var svg = d3.select('#mp')
 		    .append('svg')
-		    .attr({  'width': 250, 'height': 500  });
+		    .attr({  'width': 250, 'height': 250  });
 
 		    var line = d3.svg.line()
 		    .x(function(d){ return d.x; })
@@ -128,7 +95,7 @@ y.appendChild(imgObj);
 		    var point = data_acc.data_acc;
 		    var svg = d3.select('#Ac')
 		    .append('svg')
-		    .attr({ 'width':250, 'height': 500 });
+		    .attr({ 'width':250, 'height': 250 });
 
 	   	    var line = d3.svg.line()
 		    .x(function(d){ return d.x })
