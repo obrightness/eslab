@@ -1,0 +1,131 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>ES Lab HW2</title>
+   
+    <h1>Team 10</h1>
+    
+    <table id="tb">
+      <tr>
+	<th>Accelerometer</th>
+	<th>Map </th>
+	<th>Photo </th>	    
+      </tr>
+      <tr>
+	<td> <div id="Ac"> </div> </td> 
+	<td> <div id="mp"> </div></td> <td> <img id="box" src="" ></img>  </td> </tr>
+    </table>
+
+    <style>
+        h1{
+	  margin:30px;
+	  text-align: center;
+	}
+	table{
+	  border: 2;
+	  border-style:double;
+	  font-family: arial;
+	  font-size: 14px;
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	th{
+	  text-align: center;
+	  background-color: #FBF9D0;
+	}
+	#box{
+	  height: 250px;
+	  width: 250px;
+	}
+	img{
+	  margin: auto;
+	  height: 50%;
+	  width: 50%; 
+	}
+	
+    </style>
+  </head>
+  <body>
+    <script src="d3" charset="utf-8"></script>
+    <script src="socket"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+   
+
+    <script>
+	
+    var socket = io.connect();
+    var point;
+	
+
+	socket.on('image', function(img){
+
+		document.getElementById('box').src = img.content;
+		console.log(document.getElementById('box'));
+		
+	});
+
+    socket.on('update', function(data){
+
+            var list = [];
+            var acc = data.data;
+            for(var i=0; i<acc.length;++i){
+                list.push(JSON.parse(acc[i]));
+            }
+
+
+		    document.getElementById('mp').innerHTML = "";
+		    line_data = list;
+		    var svg = d3.select('#mp')
+		    .append('svg')
+		    .attr({  'width': 250, 'height': 250  });
+
+		    var line = d3.svg.line()
+		    .x(function(d){ return d.x; })
+		    .y(function(d){ return d.y; })
+		    .interpolate("linear-closed");	
+
+		    svg.append('path')
+		    .attr({
+			    'd': line(line_data),
+			    //'y': 0,
+			    'stroke': '#000',
+			    'stroke-width': '2px',
+			    'fill': 'none'  
+		    });
+	});
+    socket.on('acc', function(data_acc){
+
+            console.log('on acc');
+            var list = [];
+            var acc = data_acc.data_acc;
+            for(var i=0; i<acc.length;++i){
+                list.push(JSON.parse(acc[i]));
+            }
+
+		    document.getElementById('Ac').innerHTML = "";
+		    point = list;
+		    var svg = d3.select('#Ac')
+		    .append('svg')
+		    .attr({ 'width':250, 'height': 250 });
+
+	   	    var line = d3.svg.line()
+		    .x(function(d){ return 125+125*d.x })
+		    .y(function(d){ return 125+125*d.y })
+		    .interpolate("linear-closed");
+
+	 	    svg.append('path')
+		    .attr({
+			'd': line(point),
+			'stroke': '#000',
+			'stroke-width': '2px',
+			'fill': 'none'
+		    });
+
+    });
+
+    </script>
+  </body>
+</html>
+
