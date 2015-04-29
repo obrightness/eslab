@@ -7,7 +7,7 @@ var client = redis.createClient();
 var path = require('path');
 // global
 var data = '';
-var gps_data = '';
+var gps_data = {"Lat":25.017, "Lng":121.544};
 
 ///////////////////////////// Data Retrieve//////////////////
 
@@ -38,7 +38,7 @@ function tryParseJSON (jsonString){
 };
 // emit corresponded event
 function emitEvent(ev){
-    if(ev === 'acc' || ev === 'gps'){
+    if(ev === 'acc'){
         client.lrange('acc', -20, -1, function(err, repl){
             var list = [];
             console.log(repl);
@@ -46,14 +46,15 @@ function emitEvent(ev){
                 console.log(JSON.stringify(JSON.parse(repl[i])));
                 list.push(JSON.parse(repl[i]));
             }
-            gps_data = {"data_acc":repl};
+            data = {"data":repl};
         });
-    }else if(ev === 'cam'){
-    
-    
     }
 }
 
+setImmediate(function(){
+    emitEvent('acc');
+
+});
 
 // handle post request from tessel board
 app.post('/gps', function(req, res){
@@ -70,10 +71,9 @@ app.post('/gps', function(req, res){
             res.end();
             return;
         }
-        client.lpush('gps', JSON.stringify(json));
+        gps_data = json;
         res.send('ok');
         res.end();
-        emitEvent('gps');
     });
 
 });
@@ -115,7 +115,7 @@ app.post('/accel', function(req, res){
 
 app.post('/cam', function(req, res){
     //var name = 'picture-' + Math.floor(Date.now()*1000) + '.jpg';
-    var name = 'pic.jpg'
+    var name = 'img0.jpg'
     var f=fs.createWriteStream(name);
     req.on('data', function(data){
         f.write(data);
@@ -158,14 +158,14 @@ app.get('/socket', function(req, res){
   //res.sendFile('/Users/ling/Documents/eslab/exp2/socketiotest/socket.io-1.2.0.js');
 });
 app.get('/img', function(req, res){
-    res.sendFile(path.join(__dirname, 'pic.jpg'));
+    var img_name = 'img0.jpg'; 
+    res.sendFile(path.join(__dirname, img_name));
 });
 
 io.on('connection', function(socket){
   console.log('a user connected');
 
     //var imgname = '/Users/ling/Documents/eslab/exp2/socketiotest/001.jpg';    
-    var imgname = path.join(__dirname, 'pic.jpg');
 
   setInterval(
     function(){  
@@ -186,6 +186,8 @@ io.on('connection', function(socket){
 
     }, 1000);
   setInterval(function(){
+
+    var imgname = path.join(__dirname, 'img0.jpg');
     fs.readFile(imgname, 'base64', function(err, img){
 	    if (err) return;
         socket.emit('image', {content: 'data:image/jpg;base64'+img});
