@@ -1,6 +1,7 @@
 //
 var tessel = require('tessel');
-var pipes = [0x12345678, 0x12345679]
+// accel, gps, cam
+var pipes = [0x1234567A, 0x12345679, 0x12345678]
 var pack_size = 26;
 /////////////////////
 //      Classes  ////
@@ -108,17 +109,100 @@ nrf._debug = false;
 // handle nrf requests
 
 var nrf_accel = new nrf_handler(0, 'accel');
+var nrf_gps   = new nrf_handler(0, 'gps');
+var nrf_cam   = new nrf_handler(0, 'cam');
 
 nrf.on('ready', function () {
     console.log('nrf ready');
-    pipe_accel = nrf.openPipe('tx', 0x12345678, {autoAck: false});
+    pipe_accel = nrf.openPipe('tx', pipes[1], {autoAck: false});
+    pipe_gps = nrf.openPipe('tx', pipes[0], {autoAck: false});
+    pipe_cam = nrf.openPipe('tx', pipes[2], {autoAck: false});
     
+    pipe_gps.on('ready', function(){
+        console.log('gps nrf ready');
+        nrf_gps.setPipe(pipe_gps);
+    });
     pipe_accel.on('ready', function(){
         console.log('accel nrf ready');
         nrf_accel.setPipe(pipe_accel);
     });
+    pipe_cam.on('ready', function(){
+        console.log('cam nrf ready');
+        nrf_cam.setPipe(pipe_cam);
+    });
    
 });
+
+/////////////////
+//     CAM     //
+/////////////////
+var camera = require('camera-vc0706').use(tessel.port['B']);
+
+var notificationLED = tessel.led[3]; // Set up an LED to notify when we're taking a picture
+
+// Wait for the camera module to say it's ready
+camera.on('ready', function() {
+    notificationLED.high();
+    console.log('Cam Ready');
+    // Take the picture
+});
+
+camera.on('error', function(err) {
+    console.error(err);
+});
+
+// Take Picture when button is pressed
+tessel.button.on('press', function(time){
+    camera.takePicture(function(err, image) {
+        if (err) {
+            console.log('error taking image', err);
+        } else {
+            notificationLED.low();
+            // Send the image
+            console.log('Picture taken!');
+            nrf_cam.sendData(image);
+            console.log('Picture done.');
+        }
+    });
+});
+
+
+/////////////////
+//     GPS     //
+/////////////////
+var gpsLib = require('gps-a2235h');
+// we use Port C because it is port most isolated from RF noise
+var gps = gpsLib.use(tessel.port['C']); 
+gpsLib.debug = 0; // switch this to 1 for debug logs, 2 for printing out raw nmea messages
+// Wait until the module is connected
+gps.on('ready', function () {
+
+    console.log('GPS module powered and ready. Waiting for satellites...');
+
+    // Emit coordinates when we get a coordinate fix
+    gps.on('coordinates', function (coords) {
+        console.log('Lat:', coords.lat, '\tLon:', coords.lon, '\tTimestamp:', coords.timestamp);
+        var data = {
+            'Lat' : coords.lat,
+            'Lng' : coords.lon
+        };
+        nrf_gps.sendData(Buffer(JSON.stringify(data)));
+    });
+
+    gps.on('fix', function (data) {
+        console.log(data.numSat, 'fixed.');
+    });
+    gps.on('dropped', function(){
+        // we dropped the gps signal
+        console.log("gps signal dropped");
+    });
+});
+
+gps.on('error', function(err){
+    console.log("got this error", err);
+});
+
+
 
 
 //////////////////
