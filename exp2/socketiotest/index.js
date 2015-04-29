@@ -157,6 +157,9 @@ app.get('/socket', function(req, res){
     res.sendFile(path.join(__dirname, 'socket.io-1.2.0.js'));
   //res.sendFile('/Users/ling/Documents/eslab/exp2/socketiotest/socket.io-1.2.0.js');
 });
+app.get('/img', function(req, res){
+    res.sendFile(path.join(__dirname, 'pic.jpg'));
+});
 
 io.on('connection', function(socket){
   console.log('a user connected');
@@ -185,7 +188,7 @@ io.on('connection', function(socket){
   setInterval(function(){
     fs.readFile(imgname, 'base64', function(err, img){
 	    if (err) return;
-        socket.emit('image', img);
+        socket.emit('image', {content: 'data:image/jpg;base64'+img});
     });
   }, 5000);
 });
