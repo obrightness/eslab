@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>ES Lab HW2</title>
+   
+    <h1>Team 10</h1>
+    
+    <div id="humidity" align="center">
+    </div>
+    <style>
+        h1{
+	  margin:30px;
+	  text-align: center;
+	}
+	table{
+	  border: 2;
+	  border-style:double;
+	  font-family: arial;
+	  font-size: 14px;
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	th{
+	  text-align: center;
+	  background-color: #FBF9D0;
+	}
+	#box{
+	  height: 250px;
+	  width: 250px;
+	}
+	img{
+	  margin: auto;
+	  height: 50%;
+	  width: 50%; 
+	}
+	
+    </style>
+    </head>
+    <body>
+    <script src="d3" charset="utf-8"></script>
+    <script src="socket"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script src="gauge"></script>
+
+
+    <script>
+	
+    var socket = io.connect();
+    var config = {
+            size    :   500,
+            label   :   "Humidity(%)",
+            min     :   30,
+            max     :   100,
+            minorTicks: 0.1
+        };
+    var gauge = new Gauge("humidity", config);
+    gauge.render();
+    socket.on('update', function(data){
+            console.log('on data');
+            gauge.redraw(data);
+
+    });
+    </script>
+  </body>
+</html>
+

@@ -1,17 +1,16 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var fs = require('fs');
-var redis = require('redis');
-var client = redis.createClient();
+//var redis = require('redis');
+//var client = redis.createClient();
 var path = require('path');
 // global
-var data = '';
-var gps_data = {"Lat":25.017, "Lng":121.544};
+//var data = '';
+//var gps_data = {"Lat":25.017, "Lng":121.544};
 
 ///////////////////////////// Data Retrieve//////////////////
 
-
+/*
 // truncate padding zeros
 var handleData = function(data){
     var idx = data.length-1;
@@ -134,7 +133,7 @@ app.post('/cam', function(req, res){
 
 
 
-
+*/
 
 
 
@@ -153,6 +152,11 @@ app.get('/d3', function(req, res){
   //res.sendFile('/Users/ling/Documents/eslab/exp2/socketiotest/d3.v3.min.js');
 });
 
+app.get('/gauge', function(req, res){
+    res.sendFile(path.join(__dirname, 'gauge.js'));
+  //res.sendFile('/Users/ling/Documents/eslab/exp2/socketiotest/d3.v3.min.js');
+});
+
 app.get('/socket', function(req, res){
     res.sendFile(path.join(__dirname, 'socket.io-1.2.0.js'));
   //res.sendFile('/Users/ling/Documents/eslab/exp2/socketiotest/socket.io-1.2.0.js');
@@ -162,37 +166,20 @@ app.get('/img', function(req, res){
     res.sendFile(path.join(__dirname, img_name));
 });
 
+var i = 0;
 io.on('connection', function(socket){
   console.log('a user connected');
 
     //var imgname = '/Users/ling/Documents/eslab/exp2/socketiotest/001.jpg';    
 
-  setInterval(
-    function(){  
-        if(data.length == 0){
-            return;
-        }
-	    socket.emit('acc', data );
-
-    }, 1000)
-
+ 
   setInterval(
     function(){
-        if(gps_data.length == 0){
-            return;
-        }
 
-        socket.emit('update', gps_data);
+        socket.emit('update', i);
+        i+= 0.1;
 
     }, 1000);
-  setInterval(function(){
-
-    var imgname = path.join(__dirname, 'img0.jpg');
-    fs.readFile(imgname, 'base64', function(err, img){
-	    if (err) return;
-        socket.emit('image', {content: 'data:image/jpg;base64'+img});
-    });
-  }, 5000);
 });
 
 http.listen(3000, function(){

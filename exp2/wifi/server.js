@@ -18,7 +18,7 @@ var postRequestHandler = function (req, res) {
     });
 
     req.on('end', function (data) {
-      redis_client.lpush('all:comments', post_request_body, function(err, repl){
+      redis_client.lpush('test', post_request_body, function(err, repl){
         if (err) {
           res.writeHeader(500, { 'Content-Type': 'text/plain' });
           res.write('Internal Server Error');
@@ -35,7 +35,7 @@ var postRequestHandler = function (req, res) {
 
 var server = http.createServer(function (req, res) {
   if (req.method === 'GET') {
-    getRequestHandler(req, res);
+    console.log('GET!!!')
   } else if (req.method === 'POST') {
     postRequestHandler(req, res);
   }
