@@ -1,5 +1,3 @@
-
-
 var tessel = require('tessel');
 var climatelib = require('climate-si7020');
 

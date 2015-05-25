@@ -134,7 +134,10 @@ app.post('/cam', function(req, res){
 
 
 */
-
+var humid = 0;
+app.get('/humid/', function(req, res){
+    humid = parseInt(req.query.data);
+});
 
 
 
@@ -166,7 +169,6 @@ app.get('/img', function(req, res){
     res.sendFile(path.join(__dirname, img_name));
 });
 
-var i = 0;
 io.on('connection', function(socket){
   console.log('a user connected');
 
@@ -176,8 +178,7 @@ io.on('connection', function(socket){
   setInterval(
     function(){
 
-        socket.emit('update', i);
-        i+= 0.1;
+        socket.emit('update', humid);
 
     }, 1000);
 });
