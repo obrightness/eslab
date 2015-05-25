@@ -59,13 +59,12 @@
 	
     var socket = io.connect();
 	
-
-	socket.on('image', function(img){
+    socket.on('image', function(img){
 
 		document.getElementById('box').src = img.content;
 		console.log(document.getElementById('box'));
 		
-	});
+    });
 
     socket.on('update', function(data){
 
