@@ -1,6 +1,13 @@
-var arr = [ [2, 0, 2, 0], [2, 4, 2, 4], [2, 2, 0, 0], [4, 0, 0, 4] ];
-console.log(arr);
-//move([2,2,2,2]); move(arr[0]); move(arr[1]); move(arr[2]); move(arr[3]); move([2,2,4,2]);
+// led voltage: R, Y = 2.0V, G = 2.4V
+// 0, 1, 2 = g, r, y
+var tessel = require('tessel');
+var gpio = tessel.port['GPIO'];
+var up_key = gpio.analog[0];
+var dn_key = gpio.analog[1];
+var lf_key = gpio.analog[2];
+var rt_key = gpio.analog[3];
+var matrix = [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0 ,0], [0, 0, 0, 0]];
+// game functions
 function getCol(array ,col){
     var column = new Array();
     for (i = 0; i < 4; i++){
@@ -9,30 +16,23 @@ function getCol(array ,col){
     return column;
 }
 
-for(idx = 0; idx < 4; idx++){
-    console.log(idx);
-    var x = move(arr[idx]);
-    console.log(idx);
-    //console.log(x);
-}
-//update('up', arr);
 function update(dir, array){
     switch (dir) {
     	case 'left':
-	    console.log('answer '+ move(array[0]));
+	    //console.log('answer '+ move(array[0]));
 	    break;
 	case 'right':
 	    var arr_rev = array[0].reverse();
 	    var x = move(arr_rev);
-	    console.log('answer '+ x.reverse());
+	    //console.log('answer '+ x.reverse());
 	    break;
     	case 'up':
-	    console.log('answer '+ move(getCol(array, 1)));
+	    //console.log('answer '+ move(getCol(array, 1)));
 	    break;
 	case 'down':
 	    var arr_rev = getCol(array, 0).reverse();
 	    var x = move(arr_rev);
-	    console.log('answer '+ x.reverse());
+	    //console.log('answer '+ x.reverse());
 	    break;
     }
 }
@@ -44,7 +44,7 @@ function move(array){
 	    arr_temp.push(array[i]);  
 	}
     }
-    console.log('move ' + '[' + arr_temp + ']');
+    //console.log('move ' + '[' + arr_temp + ']');
     return merge(arr_temp);
 }
 
@@ -67,7 +67,7 @@ function merge(array){
 	}
     }
 
-    console.log('merge '+ '[' + arr_temp + ']');
+    //console.log('merge '+ '[' + arr_temp + ']');
     return addzero(arr_temp);
 }
 //補0
@@ -77,10 +77,33 @@ function addzero(array){
     for (i = 0; i < 4 - arr_length; i++){
 	arr_zero.push(0);
     }
-    console.log(arr_zero);
+    //console.log(arr_zero);
     var arr_temp = array.concat(arr_zero);
-    console.log(arr_temp);
+    //console.log(arr_temp);
     return arr_temp;
 }
 
 
+// main function
+var func = function(){
+    ret = tessel.c_display(matrix[0][0], matrix[0][1], matrix[0][2], matrix[0][3], matrix[1][0], matrix[1][1], matrix[1][2], matrix[1][3], matrix[2][0], matrix[2][1], matrix[2][2], matrix[2][3], matrix[3][0], matrix[3][1], matrix[3][2], matrix[3][3]);
+    if( up_key.read() > 0.5 ){
+        console.log("up key pressed!");
+        update('up', matrix);
+    }
+    if( dn_key.read() > 0.5 ){
+        console.log("dn key pressed!");
+        update('down', matrix);
+    }
+    if( lf_key.read() > 0.5 ){
+        console.log("lf key pressed!");
+        update('left', matrix);
+    }
+    if( rt_key.read() > 0.5 ){
+        console.log("rt key pressed!");
+        update('right', matrix);
+    }
+    
+}
+// main loop
+setInterval(function(){func();}, 1);
