@@ -9,11 +9,13 @@ function getCol(array ,col){
     return column;
 }
 
-/*for(i = 0; i < 4; i++){
-    var x = move(arr[i]);
-    console.log(x);
-}*/
-update('up', arr);
+for(idx = 0; idx < 4; idx++){
+    console.log(idx);
+    var x = move(arr[idx]);
+    console.log(idx);
+    //console.log(x);
+}
+//update('up', arr);
 function update(dir, array){
     switch (dir) {
     	case 'left':
